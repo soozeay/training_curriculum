@@ -27,7 +27,7 @@ class CalendarsController < ApplicationController
 
     @week_days = []
 
-    @todays_wday = wdays[@todays_date.wday]
+    @todays_wday = @todays_date.wday
 
     plans = Plan.where(date: @todays_date..@todays_date + 6)
 
@@ -36,7 +36,13 @@ class CalendarsController < ApplicationController
       plans.each do |plan|
         today_plans.push(plan.plan) if plan.date == @todays_date + x
       end
-      days = { month: (@todays_date + x).month, date: (@todays_date+x).day, plans: today_plans, wday:@todays_wday }
+
+      wday_num =  @todays_wday# wdayメソッドを用いて取得した数値
+      if wday_num + x >= 7 #「wday_numが7以上の場合」という条件式
+        wday_num -= 7
+      end
+
+      days = { month: (@todays_date + x).month, date: (@todays_date + x).day, plans: today_plans, wday:wdays[wday_num + x] }
       @week_days.push(days)
     end
 
